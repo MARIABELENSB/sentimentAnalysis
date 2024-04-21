@@ -10,6 +10,8 @@ Trabajo de Análisis de Datos No Estructurados
     - nos cargamos lo que tenga ninguna emoción o más de una emoción
     - traducimos con translate
     - concatenamos los tres y dividimos aleatoriamente en 3 conjuntos (train, test y validation) con un 70%, 15% y 15% respectivamente
+- Linear Regression y Naive Bayes --> Blanca
+- DenseNet --> Blanca
 - RNN --> Elena
 - LSTM --> Belén
 - CNN
