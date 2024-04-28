@@ -14,7 +14,7 @@ Trabajo de Análisis de Datos No Estructurados
 - [X] DenseNet --> Blanca
 - [X] RNN --> Elena
 - [ ] RNN con Glove --> Elena
-- [ ] LSTM --> Belén
+- [X] LSTM --> Belén
 - [X] CNN --> Blanca
 - [ ] Modelo preentrenado --> Belén
 - [ ] Streamlit --> Elena
