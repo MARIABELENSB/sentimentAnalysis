@@ -13,9 +13,10 @@ Trabajo de Análisis de Datos No Estructurados
 - [X] Linear Regression y Naive Bayes --> Blanca
 - [X] DenseNet --> Blanca
 - [X] RNN --> Elena
-- [ ] RNN con Glove --> Elena
+- [ ] RNN con GloVe --> Elena
 - [X] LSTM --> Belén
 - [X] CNN --> Blanca
+- [X] CNN con GloVe --> Blanca
 - [ ] Modelo preentrenado --> Belén
 - [ ] Streamlit --> Elena
   
