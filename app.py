@@ -1,7 +1,121 @@
+import sys
+print(sys.executable)
+
+import re
+
 import streamlit as st
+
+import pickle
+
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.layers import Embedding, SimpleRNN, Dense
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+import pandas as pd
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+TOKENIZER_PATH = "models/tokenizer.pickle"
+
+MODELS = [
+    {
+        "name": "Recurrent Neural Network",
+        "path": "models/rnn.h5"
+    },
+    {
+        "name": "Recurrent Neural Network with GloVe embeddings",
+        "path": "models/rnn_glove.h5"
+    }
+]
+
+emotion_to_emoji = {
+    'admiration': '🤩',
+    'amusement': '😄',
+    'anger': '😡',
+    'annoyance': '😑',
+    'approval': '👍',
+    'caring': '🥰',
+    'confusion': '😕',
+    'curiosity': '🤔',
+    'desire': '😏',
+    'disappointment': '😞',
+    'disapproval': '👎',
+    'disgust': '🤢',
+    'embarrassment': '😳',
+    'excitement': '😃',
+    'fear': '😨',
+    'gratitude': '🙏',
+    'joy': '😀',
+    'love': '❤️',
+    'neutral': '😐',
+    'optimism': '😊',
+    'realization': '😲',
+    'sadness': '😢',
+    'surprise': '😮'
+}
+
+def load_tokenizer():
+    with open(TOKENIZER_PATH, "rb") as file:
+        tokenizer = pickle.load(file)
+    return tokenizer
+
+def remove_special_characters(sentence, remove_digits=False):
+    print(f'Removing special characters from sentence: {sentence}')
+    pattern = r'/[^\w-]|_/' if not remove_digits else r'[^a-zA-Z\s]'  
+    clean_text = re.sub(pattern, '', sentence)
+    print(f'Cleaned sentence: {clean_text}')
+    return clean_text
+
+def preprocess_input(text):
+    # Download the NLTK resources and initialize the lemmatizer
+    nltk.download("stopwords")
+    nltk.download("wordnet")
+    stop_words = stopwords.words("english")
+    lemmatizer = WordNetLemmatizer()
+
+    # Remove special characters
+    text = remove_special_characters(text, remove_digits=True)
+
+    # Apply lemmatization
+    text = " ".join([lemmatizer.lemmatize(word) for word in text.split()])
+
+    # Remove stopwords
+    text = " ".join([word for word in text.split() if word not in stop_words])
+
+    # Text to lowercase
+    text = text.lower()
+
+    # Tokenize the input text
+    tokenizer = load_tokenizer()
+    text = tokenizer.texts_to_sequences([text])
+
+    # Pad the input text
+    text = pad_sequences(text, maxlen=18)
+
+    return text
+
+def predict_sentiment(text, model_used):
+    print(f"Predicting sentiment for tokenized text: {text}")
+    prediction = model_used.predict(text)[0]
+    print(f"Prediction: {prediction}")
+    # prediction is a list of probabilities for each class
+    # return the top 3 classes with the highest probabilities
+    # as well as the corresponding emojis
+    # as a list of tuples [(emoji, emotion, probability), ...]
+    top_classes = prediction.argsort()[-3:][::-1]
+    print(f"Top classes: {top_classes}")
+    emotion_labels = list(emotion_to_emoji.keys())
+    print(emotion_labels)
+    top_classes_info = [(emotion_to_emoji[emotion_labels[top_class]], emotion_labels[top_class], prediction[top_class]) for top_class in top_classes]
+    print(top_classes_info)
+    return top_classes_info
 
 # Streamlit app
 def main():
+
     # Favicon
     st.set_page_config(page_title="moodAI", page_icon="img/logo_moodai.png")
     
@@ -16,11 +130,30 @@ def main():
     # Text input for user input
     text = st.text_input("Enter a text message below to see the sentiment analysis result:")
 
+    # Dropdown for selecting the model
+    model_selected = st.selectbox("Select a model:", [model["name"] for model in MODELS])
+
+    # Load the selected model
+    model_path = [model["path"] for model in MODELS if model["name"] == model_selected][0]
+    print(f'Loading model from path: {model_path}')
+    model_loaded = load_model(model_path)
+    print(f'Model loaded: {model_loaded}')
+
     # Add a button to trigger the classification
     if st.button("Analyze"):
-        # Display the sentiment analysis result
-        st.write("🥰 affection - 57%" if text == "I love you" else "😡 anger - 22%")
-
+        # If text is longer than 18 words, display an error message
+        if len(text.split()) > 18:
+            st.error("The input text is too long. Please enter a text with less than 18 words.")
+        else:
+            # Preprocess the input text
+            text = preprocess_input(text)
+            # Predict the sentiment
+            result = predict_sentiment(text, model_loaded)
+            # Display the sentiment analysis results
+            st.write("Sentiment analysis result:")
+            for emotion in result:
+                st.write(f"{emotion[0]} {emotion[1]} - {emotion[2]*100:.0f} %")
+        
 # Run the app
 if __name__ == "__main__":
     main()
