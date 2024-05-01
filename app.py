@@ -150,9 +150,9 @@ def main():
             # Predict the sentiment
             result = predict_sentiment(text, model_loaded)
             # Display the sentiment analysis results
-            st.write("Sentiment analysis result:")
+            st.markdown("<h4>Sentiment analysis result:</h4>", unsafe_allow_html=True)
             for emotion in result:
-                st.write(f"{emotion[0]} {emotion[1]} - {emotion[2]*100:.0f} %")
+                st.markdown(f"<h4>{emotion[0]} {emotion[1]} - {emotion[2]*100:.0f} %</h4>", unsafe_allow_html=True)
         
 # Run the app
 if __name__ == "__main__":
