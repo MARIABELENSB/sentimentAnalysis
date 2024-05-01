@@ -191,13 +191,9 @@ def main():
     if model_path.endswith(".joblib"):
         model_loaded_joblib = joblib.load(model_path)
         print(f'Model loaded: {model_loaded_joblib}')
-        result = predict_sentiment_joblib(text, model_loaded_joblib)
     else:
         model_loaded = load_model(model_path)
         print(f'Model loaded: {model_loaded}')
-        text = preprocess_input(text)
-        # Predict the sentiment
-        result = predict_sentiment(text, model_loaded)
 
     # Add a button to trigger the classification
     if st.button("Analyze"):
@@ -206,9 +202,12 @@ def main():
             st.error("The input text is too long. Please enter a text with less than 18 words.")
         else:
             # Preprocess the input text
-            text = preprocess_input(text)
-            # Predict the sentiment
-            result = predict_sentiment(text, model_loaded)
+            if model_path.endswith(".joblib"):
+                result = predict_sentiment_joblib(text, model_loaded_joblib)
+            else: 
+                text = preprocess_input(text)
+                # Predict the sentiment
+                result = predict_sentiment(text, model_loaded)
             # Display the sentiment analysis results
             st.markdown("<h4>Sentiment analysis result:</h4>", unsafe_allow_html=True)
             for emotion in result:
