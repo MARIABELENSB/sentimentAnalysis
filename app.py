@@ -55,6 +55,10 @@ MODELS = [
         "name": "Naive Bayes with Bag-of-Words",
         "path": "models/naives_tfidf.joblib"
     },
+    {
+        "name": "DenseNet",
+        "path": "models/denseNet_model.h5"
+    },
 ]
 
 emotion_to_emoji = {
@@ -95,7 +99,7 @@ def remove_special_characters(sentence, remove_digits=False):
     print(f'Cleaned sentence: {clean_text}')
     return clean_text
 
-def preprocess_input(text):
+def preprocess_input(text, maxlen=18):
     # Download the NLTK resources and initialize the lemmatizer
     nltk.download("stopwords")
     nltk.download("wordnet")
@@ -119,7 +123,7 @@ def preprocess_input(text):
     text = tokenizer.texts_to_sequences([text])
 
     # Pad the input text
-    text = pad_sequences(text, maxlen=18)
+    text = pad_sequences(text, maxlen=maxlen)
 
     return text
 
@@ -205,7 +209,10 @@ def main():
             if model_path.endswith(".joblib"):
                 result = predict_sentiment_joblib(text, model_loaded_joblib)
             else: 
-                text = preprocess_input(text)
+                if "Convolutional" in model_selected:
+                    text = preprocess_input(text, maxlen=19)
+                else:
+                    text = preprocess_input(text, maxlen=18)
                 # Predict the sentiment
                 result = predict_sentiment(text, model_loaded)
             # Display the sentiment analysis results
