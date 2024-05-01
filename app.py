@@ -49,11 +49,11 @@ MODELS = [
     },
     {
         "name": "Naive Bayes with TF-IDF",
-        "path": "models/naives_tfidf.joblib"
+        "path": "models/naive_tfidf.joblib"
     },
     {
         "name": "Naive Bayes with Bag-of-Words",
-        "path": "models/naives_tfidf.joblib"
+        "path": "models/naive_tfidf.joblib"
     },
     {
         "name": "DenseNet",
