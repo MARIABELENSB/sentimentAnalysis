@@ -40,6 +40,14 @@ MODELS = [
         "path": "models/cnn_model_glove.keras"
     },
     {
+        "name": "Long Short Term Memory Network",
+        "path": "models/lstm_l2_model.keras"
+    },
+    {
+        "name": "Long Short Term Memory Networks with GloVe embeddings",
+        "path": "models/lstm_glove_model.keras"
+    },
+    {
         "name": "Logistic Regression with Bag-of-Words",
         "path": "models/logReg_bow.joblib"
     },
@@ -195,6 +203,7 @@ def main():
     if model_path.endswith(".joblib"):
         model_loaded_joblib = joblib.load(model_path)
         print(f'Model loaded: {model_loaded_joblib}')
+
     else:
         model_loaded = load_model(model_path)
         print(f'Model loaded: {model_loaded}')
@@ -208,13 +217,16 @@ def main():
             # Preprocess the input text
             if model_path.endswith(".joblib"):
                 result = predict_sentiment_joblib(text, model_loaded_joblib)
-            else: 
-                if "Convolutional" in model_selected:
+
+            else:
+                if "Convolutional" or "Long" in model_selected:
                     text = preprocess_input(text, maxlen=19)
                 else:
                     text = preprocess_input(text, maxlen=18)
+
                 # Predict the sentiment
                 result = predict_sentiment(text, model_loaded)
+
             # Display the sentiment analysis results
             st.markdown("<h4>Sentiment analysis result:</h4>", unsafe_allow_html=True)
             for emotion in result:
