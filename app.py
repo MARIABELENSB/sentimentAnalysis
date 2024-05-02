@@ -14,6 +14,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 import pandas as pd
 
+import joblib
+
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -28,7 +30,35 @@ MODELS = [
     {
         "name": "Recurrent Neural Network with GloVe embeddings",
         "path": "models/rnn_glove.h5"
-    }
+    },
+    {
+        "name": "Convolutional Neural Network",
+        "path": "models/cnn_model.keras"
+    },
+    {
+        "name": "Convolutional Neural Network with GloVe embeddings",
+        "path": "models/cnn_model_glove.keras"
+    },
+    {
+        "name": "Logistic Regression with Bag-of-Words",
+        "path": "models/logReg_bow.joblib"
+    },
+    {
+        "name": "Logistic Regression with TF-IDF",
+        "path": "models/logReg_tfidf.joblib"
+    },
+    {
+        "name": "Naive Bayes with TF-IDF",
+        "path": "models/naive_tfidf.joblib"
+    },
+    {
+        "name": "Naive Bayes with Bag-of-Words",
+        "path": "models/naive_tfidf.joblib"
+    },
+    {
+        "name": "DenseNet",
+        "path": "models/denseNet_model.h5"
+    },
 ]
 
 emotion_to_emoji = {
@@ -69,7 +99,7 @@ def remove_special_characters(sentence, remove_digits=False):
     print(f'Cleaned sentence: {clean_text}')
     return clean_text
 
-def preprocess_input(text):
+def preprocess_input(text, maxlen=18):
     # Download the NLTK resources and initialize the lemmatizer
     nltk.download("stopwords")
     nltk.download("wordnet")
@@ -93,9 +123,34 @@ def preprocess_input(text):
     text = tokenizer.texts_to_sequences([text])
 
     # Pad the input text
-    text = pad_sequences(text, maxlen=18)
+    text = pad_sequences(text, maxlen=maxlen)
 
     return text
+
+def predict_sentiment_joblib(text, model_used):
+    if isinstance(text, str):
+        text = [text]
+    print(f'text: {text}')
+    print(f"Predicting sentiment for tokenized text: {text}")
+    prediction = model_used.predict_proba(text)[0]
+    print(f"Prediction: {prediction}")
+    # prediction is a list of probabilities for each class
+    # return the top 3 classes with the highest probabilities
+    # as well as the corresponding emojis
+    # as a list of tuples [(emoji, emotion, probability), ...]
+    # Obtener las clases del modelo
+    classes = model_used.classes_
+    print("Classes:", classes)
+
+    # Encontrar los índices de las tres mayores probabilidades
+    top_indices = prediction.argsort()[-3:][::-1]
+    print(f"Top classes indices: {top_indices}")
+
+    # Recolectar la información de las tres mejores clases
+    top_classes_info = [(emotion_to_emoji[classes[i]], classes[i], prediction[i]) for i in top_indices]
+    print("Top classes information:", top_classes_info)
+
+    return top_classes_info
 
 def predict_sentiment(text, model_used):
     print(f"Predicting sentiment for tokenized text: {text}")
@@ -136,8 +191,13 @@ def main():
     # Load the selected model
     model_path = [model["path"] for model in MODELS if model["name"] == model_selected][0]
     print(f'Loading model from path: {model_path}')
-    model_loaded = load_model(model_path)
-    print(f'Model loaded: {model_loaded}')
+
+    if model_path.endswith(".joblib"):
+        model_loaded_joblib = joblib.load(model_path)
+        print(f'Model loaded: {model_loaded_joblib}')
+    else:
+        model_loaded = load_model(model_path)
+        print(f'Model loaded: {model_loaded}')
 
     # Add a button to trigger the classification
     if st.button("Analyze"):
@@ -146,9 +206,15 @@ def main():
             st.error("The input text is too long. Please enter a text with less than 18 words.")
         else:
             # Preprocess the input text
-            text = preprocess_input(text)
-            # Predict the sentiment
-            result = predict_sentiment(text, model_loaded)
+            if model_path.endswith(".joblib"):
+                result = predict_sentiment_joblib(text, model_loaded_joblib)
+            else: 
+                if "Convolutional" in model_selected:
+                    text = preprocess_input(text, maxlen=19)
+                else:
+                    text = preprocess_input(text, maxlen=18)
+                # Predict the sentiment
+                result = predict_sentiment(text, model_loaded)
             # Display the sentiment analysis results
             st.markdown("<h4>Sentiment analysis result:</h4>", unsafe_allow_html=True)
             for emotion in result:
