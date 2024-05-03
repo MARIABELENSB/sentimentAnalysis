@@ -10,7 +10,7 @@ The goal of this tool is to help people who are not able to detect emotions in t
 The tool is available as a [Streamlit web application](https://moodai.streamlit.app/), where users can input text, select the model they want to use and get the emotions detected in the text.
 
 ## 🔍 Exploratory Data Analysis and Data Preprocessing
-The data used in this project is the [GoEmotions dataset](https://github.com/google-research/google-research/tree/master/goemotions) from Google Research. This dataset contains 58,000 English Reddit comments labeled with 27 emotions. We have leaved out the comments with more than one emotion and the ones with no emotion labeled. Also, we have dropped the comments with rare emotions, so we have ended up with 23 emotions.
+The data used in this project is the [GoEmotions dataset](https://github.com/google-research/google-research/tree/master/goemotions) from Google Research. This dataset contains 58,000 English Reddit comments labeled with 28 emotions. We have leaved out the comments with more than one emotion and the ones with no emotion labeled. Also, we have dropped the comments with rare emotions, so we have ended up with 23 emotions.
 
 The data has been preprocessed by removing special characters, numbers, and stopwords. We have also tokenized the text and lemmatized it.
 
