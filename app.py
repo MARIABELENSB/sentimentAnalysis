@@ -61,7 +61,7 @@ MODELS = [
     },
     {
         "name": "Naive Bayes with Bag-of-Words",
-        "path": "models/naive_tfidf.joblib"
+        "path": "models/naive_bow.joblib"
     },
     {
         "name": "DenseNet",
@@ -210,28 +210,26 @@ def main():
 
     # Add a button to trigger the classification
     if st.button("Analyze"):
-        # If text is longer than 18 words, display an error message
         if len(text.split()) > 18:
             st.error("The input text is too long. Please enter a text with less than 18 words.")
         else:
-            # Preprocess the input text
+            # Determine the correct maximum length for padding based on the model selected
+            if "Convolutional" in model_selected or "Long" in model_selected:
+                processed_text = preprocess_input(text, maxlen=19)
+            else:
+                processed_text = preprocess_input(text, maxlen=18)
+
+            # Predict the sentiment
             if model_path.endswith(".joblib"):
                 result = predict_sentiment_joblib(text, model_loaded_joblib)
-
             else:
-                if "Convolutional" or "Long" in model_selected:
-                    text = preprocess_input(text, maxlen=19)
-                else:
-                    text = preprocess_input(text, maxlen=18)
-
-                # Predict the sentiment
-                result = predict_sentiment(text, model_loaded)
+                result = predict_sentiment(processed_text, model_loaded)
 
             # Display the sentiment analysis results
             st.markdown("<h4>Sentiment analysis result:</h4>", unsafe_allow_html=True)
             for emotion in result:
                 st.markdown(f"<h4>{emotion[0]} {emotion[1]} - {emotion[2]*100:.0f} %</h4>", unsafe_allow_html=True)
-        
+
 # Run the app
 if __name__ == "__main__":
     main()
