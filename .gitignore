@@ -3,3 +3,4 @@ gloveTwitter
 SentAnalysis
 results
 logs
+models/distilbert_model/model.safetensors
