@@ -12,8 +12,6 @@ async-lru==2.0.4
 attrs==23.1.0
 babel==2.13.0
 backcall==0.2.0
-backports==1.0
-backports.functools_lru_cache==1.6.5
 beautifulsoup4==4.12.2
 bleach==6.1.0
 blinker==1.7.0
