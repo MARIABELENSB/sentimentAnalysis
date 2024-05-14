@@ -29,12 +29,14 @@ Then, we trained some Deep Learning models from scratch and using GloVe embeddin
 - [Convolutional Neural Network (CNN)](https://github.com/MARIABELENSB/sentimentAnalysis/blob/main/CNN.ipynb)
 - [Convolutional Neural Network (CNN) with GloVe embeddings](https://github.com/MARIABELENSB/sentimentAnalysis/blob/main/CNN%2BGloVe.ipynb)
 
-We have also trained a model using a pre-trained model:
+We have also trained a model using pre-trained models:
 - [DenseNet](https://github.com/MARIABELENSB/sentimentAnalysis/blob/main/DenseNet.ipynb)
+- [BERT](https://github.com/MARIABELENSB/sentimentAnalysis/blob/main/PretrainedModel.ipynb)
 
 
 ## 🚀 Deployment
-The tool is available as a [Streamlit web application](https://moodai.streamlit.app/), where users can input text, select the model they want to use and get the emotions detected in the text.
+The tool is available as a Streamlit web app, by running `streamlit run app.py`, where users can input text, select the model they want to use, and get the emotions detected in the text.
+[![Watch the video](img/Captura%20de%20pantalla%202024-05-14%20175840.png)](img/WhatsApp%20Video%202024-05-14%20at%2017.51.27.mp4)
 
 ## 🛠️ Technologies used
 - pandas 🐼
