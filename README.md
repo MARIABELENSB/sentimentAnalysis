@@ -36,7 +36,7 @@ We have also trained a model using pre-trained models:
 
 ## 🚀 Deployment
 The tool is available as a Streamlit web app, by running `streamlit run app.py`, where users can input text, select the model they want to use, and get the emotions detected in the text.
-[![Watch the video](img/Captura%20de%20pantalla%202024-05-14%20175840.png)](img/WhatsApp%20Video%202024-05-14%20at%2017.51.27.mp4)
+[![Watch the video](img/Captura%20de%20pantalla%202024-05-14%20175840.png)](img/moodai.mov)
 
 ## 🛠️ Technologies used
 - pandas 🐼
